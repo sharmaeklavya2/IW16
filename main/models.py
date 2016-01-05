@@ -11,7 +11,6 @@ class Question(models.Model):
 	qno = models.PositiveIntegerField("Question number", unique=True)
 	title = models.CharField(max_length=30, blank=True)
 	text = models.TextField(blank=True)
-	image_name = models.CharField(max_length=32, blank=True)
 	corrans = models.CharField("Correct Answer", max_length=MAX_ANSWER_LENGTH, blank=False)
 	score = models.IntegerField(default=0)
 

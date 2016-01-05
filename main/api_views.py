@@ -31,7 +31,7 @@ def get_question(request, qno):
 	try:
 		qno = int(qno)
 		q = Question.objects.get(qno=qno)
-		data = OrderedDict([("qno", q.qno), ("title", q.title), ("image_name", q.image_name), ("text", q.text)])
+		data = OrderedDict([("qno", q.qno), ("title", q.title), ("text", q.text)])
 		if get_perm("answer"):
 			return MyJsonResponse(data)
 		else:
