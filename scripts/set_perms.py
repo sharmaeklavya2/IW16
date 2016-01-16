@@ -7,24 +7,25 @@ if BASE_DIR not in sys.path:
 	sys.path.append(BASE_DIR)
 
 perms = [
-	("register", False),
-	("answer", False),
+	"register",
+	"answer",
 ]
 
 def set_perms():
-	for (label, value) in perms:
-		userin = input("Allow users to {0}? (y/n) ".format(label, value))
+	for label in perms:
+		userin = input("Allow users to {0}? (y/n) ".format(label))
 		if userin.lower()=="y":
 			value = True
 		elif userin.lower()=="n":
 			value = False
+		else:
+			raise ValueError("You must choose y or n")
 		try:
 			perm = GamePerm.objects.get(label=label)
 			perm.value = value
 		except GamePerm.DoesNotExist:
 			perm = GamePerm(label=label, value=value)
-		finally:
-			perm.save()
+		perm.save()
 
 if __name__=="__main__":
 	# set up django
