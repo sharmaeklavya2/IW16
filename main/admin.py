@@ -6,7 +6,7 @@ class QuestionAdmin(ModelAdmin):
 	list_display = ("qno", "title", "corrans")
 
 class AnswerAdmin(ModelAdmin):
-	list_display = ("text", "attstat")
+	list_display = ("text", "is_correct", "user", "time")
 
 class GamePermAdmin(ModelAdmin):
 	list_display = ("label", "value")

@@ -8,6 +8,7 @@ if BASE_DIR not in sys.path:
 
 perms = [
 	"register",
+	"view_ques",
 	"answer",
 ]
 

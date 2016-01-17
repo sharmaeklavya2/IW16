@@ -32,7 +32,7 @@ def get_question(request, qno):
 		qno = int(qno)
 		q = Question.objects.get(qno=qno)
 		data = OrderedDict([("qno", q.qno), ("title", q.title), ("text", q.text)])
-		if get_perm("answer"):
+		if get_perm("view_ques"):
 			return MyJsonResponse(data)
 		else:
 			return TextResponse("403 - Forbidden - You are not allowed to view questions now", 403)

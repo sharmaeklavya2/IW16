@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.conf import settings
 
@@ -26,22 +26,23 @@ class Player(models.Model):
 
 	def __str__(self):
 		return self.user.username
-	def get_qnos_of_attstat(self, attstat):
-		return Answer.objects.filter(attstat=attstat).values_list('question__qno', flat=True)
 	def get_score(self):
-		return Answer.objects.filter(attstat=True).count()
+		return Answer.objects.filter(is_correct=True, user=self.user).count()
+	def get_total_time(self):
+		corr_answers = list(Answer.objects.filter(is_correct=True, user=self.user).all())
+		times_gen = ((x.time - settings.BASE_DATETIME) + (x.attempts-1)*timedelta(seconds=settings.TIME_PENALTY) for x in corr_answers)
+		return sum(times_gen, timedelta(0))
 
 class Answer(models.Model):
 	text = models.CharField("Player's Answer", max_length=MAX_ANSWER_LENGTH, blank=False)
 	user = models.ForeignKey(User)
 	question = models.ForeignKey(Question)
-	attstat = models.NullBooleanField("Attempt Status")
+	is_correct = models.BooleanField(default=False)
 	attempts = models.PositiveIntegerField(default=0)
 	time = models.DateTimeField()
-	# True means correct, False means incorrect, None means not attempted
 
 	def __str__(self):
-		return "(user={}, question={}, text={}, attstat={}, attempts={})".format(self.user, self.question, self.text, self.attstat, self.attempts)
+		return "(user={}, question={}, text={}, is_correct={}, attempts={})".format(self.user, self.question, self.text, self.is_correct, self.attempts)
 	def get_attstat(self):
 		if self.text:
 			return self.text.lower()==self.question.corrans.lower()
@@ -70,11 +71,11 @@ def make_answer(question, user, userans):
 		ans.time = time
 	except Answer.DoesNotExist:
 		ans = Answer(question=question, user=user, time=time)
-	if ans.attempts<settings.MAX_ATTEMPTS and ans.attstat!=True:
+	if not ans.is_correct:
 		ans.text = userans
-		ans.attstat = ans.get_attstat()
+		ans.is_correct = ans.get_attstat()
 		ans.attempts+= 1
 		ans.save()
-		return ans.attstat
+		return ans.is_correct
 	else:
 		return None

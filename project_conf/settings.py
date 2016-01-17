@@ -86,8 +86,16 @@ STATIC_URL = "/static/"
 
 # Misc
 
+from datetime import datetime
+from django.utils import timezone
+
 if DEBUG:
 	JSON_INDENT_LEVEL = 2
 else:
 	JSON_INDENT_LEVEL = None
-MAX_ATTEMPTS = 5
+
+TIME_PENALTY = 60
+# Number of seconds to be added to player's total time.
+
+BASE_DATETIME = timezone.now()
+# datetime used to calculate total time of a user
