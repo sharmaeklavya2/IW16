@@ -6,10 +6,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers.json import DjangoJSONEncoder
 
 import json
-from collections import OrderedDict
 from datetime import datetime, timedelta
 
-from main.models import Question, Player, Answer, make_answer, get_perm
+from main.models import Question, Player, Answer, GamePerm, make_answer, get_perm
 from django.conf import settings
 
 def TextResponse(message, status=None):
@@ -32,7 +31,7 @@ def get_question(request, qno):
 	try:
 		qno = int(qno)
 		q = Question.objects.get(qno=qno)
-		data = OrderedDict([("qno", q.qno), ("title", q.title), ("text", q.text)])
+		data = settings.DICT_TYPE([("qno", q.qno), ("title", q.title), ("text", q.text)])
 		if get_perm("view_ques"):
 			return MyJsonResponse(data)
 		else:
@@ -80,13 +79,24 @@ def submit(request, qno):
 		if not get_perm("answer"):
 			return TextResponse("403 - Forbidden - You are not allowed to answer questions now", 403)
 		elif "answer" in request.POST and request.POST["answer"]:
-			attstat = make_answer(q, request.user, request.POST["answer"])
-			if attstat==False:
-				return TextResponse("wrong")
-			elif attstat==True:
-				return TextResponse("correct")
+			ans = make_answer(q, request.user, request.POST["answer"])
+			if ans:
+				if ans.is_correct:
+					attstat = "correct"
+				else:
+					attstat = "wrong"
+				time = ans.time
+				solve_time_s = ans.get_solve_time().total_seconds()
 			else:
-				return TextResponse("na")
+				attstat = "na"
+				time = None
+				solve_time_s = None
+			ans_dict = [
+				("attstat", attstat),
+				("time", time),
+				("solve_time_s", solve_time_s),
+			]
+			return MyJsonResponse(settings.DICT_TYPE(ans_dict))
 		else:
 			return TextResponse("400 - Bad Request", 400)
 	except (ValueError, Question.DoesNotExist):
@@ -129,9 +139,13 @@ def user_info(request):
 	return MyJsonResponse(user_dict)
 
 def game_info(request):
+	perms = {}
+	for perm in GamePerm.objects.all():
+		perms[perm.label] = perm.value
 	response_dict = {
 		"total_questions": Question.objects.count(),
 		"base_datetime": settings.BASE_DATETIME,
 		"time_penalty_s": settings.TIME_PENALTY_S,
+		"perms": perms,
 	}
 	return MyJsonResponse(response_dict)

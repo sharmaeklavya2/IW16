@@ -77,6 +77,6 @@ def make_answer(question, user, userans):
 		ans.is_correct = ans.get_attstat()
 		ans.attempts+= 1
 		ans.save()
-		return ans.is_correct
+		return ans
 	else:
 		return None
