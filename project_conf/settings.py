@@ -86,15 +86,18 @@ STATIC_URL = "/static/"
 
 # Misc
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.utils import timezone
+from collections import OrderedDict
 
 if DEBUG:
 	JSON_INDENT_LEVEL = 2
+	DICT_TYPE = OrderedDict
 else:
 	JSON_INDENT_LEVEL = None
+	DICT_TYPE = dict
 
-TIME_PENALTY = 60
+TIME_PENALTY_S = 60
 # Number of seconds to be added to player's total time.
 
 BASE_DATETIME = timezone.now()

@@ -7,8 +7,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 import json
 from collections import OrderedDict
+from datetime import datetime, timedelta
 
-from main.models import Question, Player, make_answer, get_perm
+from main.models import Question, Player, Answer, make_answer, get_perm
 from django.conf import settings
 
 def TextResponse(message, status=None):
@@ -17,7 +18,7 @@ def TextResponse(message, status=None):
 def MyJsonResponse(object_to_send, status=None):
 	return HttpResponse(json.dumps(object_to_send, indent=settings.JSON_INDENT_LEVEL, cls=DjangoJSONEncoder), content_type="application/json", status=status)
 
-def login_required_for_api(func):
+def login_required_ajax(func):
 	def dec_func(request, **kwargs):
 		if request.user.is_authenticated():
 			return func(request, **kwargs)
@@ -26,7 +27,7 @@ def login_required_for_api(func):
 	return dec_func
 
 @require_safe
-#@login_required_for_api
+#@login_required_ajax
 def get_question(request, qno):
 	try:
 		qno = int(qno)
@@ -71,7 +72,7 @@ def logout_view(request):
 
 @csrf_exempt
 @require_POST
-@login_required_for_api
+@login_required_ajax
 def submit(request, qno):
 	try:
 		qno = int(qno)
@@ -90,3 +91,47 @@ def submit(request, qno):
 			return TextResponse("400 - Bad Request", 400)
 	except (ValueError, Question.DoesNotExist):
 		return TextResponse("404 - Not Found", 404)
+
+def get_ans_dict(ans, solve_time=None):
+	if solve_time==None:
+		solve_time = ans.get_solve_time()
+	ans_data = [
+		("qno", ans.question.qno),
+		("text", ans.text),
+		("attempts", ans.attempts),
+		("time_taken_s", solve_time.total_seconds()),
+		("time", ans.time),
+	]
+	return settings.DICT_TYPE(ans_data)
+
+@login_required_ajax
+def user_info(request):
+	user = request.user
+	corrs_db = Answer.objects.filter(user=user, is_correct=True)
+	wrongs_db = Answer.objects.filter(user=user, is_correct=False, attempts__gt=0)
+	corrs = []
+	total_time = timedelta(0)
+	for ans in corrs_db:
+		solve_time = ans.get_solve_time()
+		total_time+= solve_time
+		corrs.append(get_ans_dict(ans, solve_time))
+	wrongs = []
+	for ans in wrongs_db:
+		wrongs.append(get_ans_dict(ans))
+	user_data = [
+		("username", user.username),
+		("score", len(corrs)),
+		("time_taken_s", total_time.total_seconds()),
+		("corrects", corrs),
+		("wrongs", wrongs),
+	]
+	user_dict = settings.DICT_TYPE(user_data)
+	return MyJsonResponse(user_dict)
+
+def game_info(request):
+	response_dict = {
+		"total_questions": Question.objects.count(),
+		"base_datetime": settings.BASE_DATETIME,
+		"time_penalty_s": settings.TIME_PENALTY_S,
+	}
+	return MyJsonResponse(response_dict)

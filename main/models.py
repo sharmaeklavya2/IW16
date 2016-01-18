@@ -30,8 +30,7 @@ class Player(models.Model):
 		return Answer.objects.filter(is_correct=True, user=self.user).count()
 	def get_total_time(self):
 		corr_answers = list(Answer.objects.filter(is_correct=True, user=self.user).all())
-		times_gen = ((x.time - settings.BASE_DATETIME) + (x.attempts-1)*timedelta(seconds=settings.TIME_PENALTY) for x in corr_answers)
-		return sum(times_gen, timedelta(0))
+		return sum((x.get_solve_time() for x in corr_answers), timedelta(0))
 
 class Answer(models.Model):
 	text = models.CharField("Player's Answer", max_length=MAX_ANSWER_LENGTH, blank=False)
@@ -48,6 +47,8 @@ class Answer(models.Model):
 			return self.text.lower()==self.question.corrans.lower()
 		else:
 			return None
+	def get_solve_time(self):
+		return (self.time - settings.BASE_DATETIME) + (self.attempts-1)*timedelta(seconds=settings.TIME_PENALTY_S)
 
 class GamePerm(models.Model):
 	label = models.CharField(max_length=30, blank=False, unique=True)
