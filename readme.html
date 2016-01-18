@@ -40,28 +40,40 @@ h1, h2
 <body>
 <h1>IW16</h1>
 
-<p>This is the backend for <strong>Internet Whirlwind 2016</strong>. It is written in Python 3.4 and Django 1.8.</p>
+<p>This is the backend for <strong>Internet Whirlwind 2016</strong>. It is written in Python 3.4 and Django 1.8. Currently it only includes API calls and admin interface integration.</p>
 
-<h2>How to deploy</h2>
+<p>API calls are documented in <code>api_doc.html</code>.</p>
+
+<h2>How to set up</h2>
 
 <pre><code>python3 manage.py runserver makemigrations
 python3 manage.py runserver migrate
 python3 scripts/add_ques.py data/sample_questions.json
 python3 scripts/set_perms.py
 python3 manage.py createsuperuser
-python3 manage.py runserver 0.0.0.0:8000
 </code></pre>
 
 <h2>How to test</h2>
 
-<p>You can add, remove and edit users, questions, answers, and game permissions using the admin interface at <code>/admin/</code>.</p>
+<pre><code>python3 manage.py runserver 0.0.0.0:8000
+</code></pre>
 
-<p>You can test the API calls listed in <code>main/urls.py</code> using Ajax or curl. You will need to pass the <code>sessionid</code> cookie to use the <code>submit</code> API call. All API calls are POST and return <code>text/plain</code>, except <code>get_questions</code> which is GET and returns <code>application/json</code>.</p>
+<p>You can then add, remove and edit users, questions, answers, and game permissions using the admin interface at <code>/admin/</code>.</p>
 
-<p>API documentation and complete instructions for testing will be added soon.</p>
+<h2>Permissions</h2>
+
+<p>It is possible to control if users can register, view questions, answer questions, etc. using game permissions. Game permissions are boolean values. They can be set by running <code>scripts/set_perms.py</code>. Currently there are 3 kinds of permissions:</p>
+
+<ol>
+<li><code>register</code> - Whether users can register</li>
+<li><code>view_ques</code> - Whether users can view questions</li>
+<li><code>answer</code> - Whether users can submit answers to questions</li>
+</ol>
+
+<p>Game permissions are enforced at API view level. Hence, they do not affect admin interface.</p>
 
 <h2>Rules of the game</h2>
 
-<p>There are multiple questions. All questions have a string as answer. Each user has <code>MAX_ATTEMPTS</code> attempts to give a correct answer. Every correct answer gives a single point to the user. There is no negative marking.</p>
+<p>There are multiple questions. All questions have a string as answer. All questions have infinite attempts. ACM-ICPC-like rules are used for ranking people.</p>
 </body>
 </html>
