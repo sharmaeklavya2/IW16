@@ -42,17 +42,8 @@ def get_question(request, qno):
 @csrf_exempt
 @require_POST
 def login_view(request):
-	if "uoe" in request.POST and "password" in request.POST and request.POST["uoe"] and request.POST["password"]:
-		uoe = request.POST["uoe"]
-		password = request.POST["password"]
-		try:
-			if "@" in uoe:
-				username = User.objects.get(email=uoe).username
-			else:
-				username = uoe
-			user = authenticate(username=username, password=password)
-		except User.DoesNotExist:
-			return TextResponse("wrong_login")
+	if "username" in request.POST and "password" in request.POST and request.POST["username"] and request.POST["password"]:
+		user = authenticate(username=request.POST["username"], password=request.POST["password"])
 		if not user:
 			return TextResponse("wrong_login")
 		elif not user.is_active:

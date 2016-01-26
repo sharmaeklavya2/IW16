@@ -130,14 +130,14 @@
 				<tr><td>Login required</td><td>No</td></tr>
 			</table>
 			<h4>Request:</h4>
-			<table>
-				<tr><td>uoe</td><td>Username or email</td></tr>
-				<tr><td>password</td><td></td></tr>
-			</table>
+			<ul>
+				<li>username</li>
+				<li>password</li>
+			</ul>
 			<h4>Response:</h4>
 			<p>These are the possible responses:</p>
 			<table>
-				<tr><td>success</td><td>login was successful. <code>sessionid</code> cookie is returned or set.</td></tr>
+				<tr><td>success</td><td>login was successful. <code>sessionid</code> cookie is set.</td></tr>
 				<tr><td>inactive</td><td>The user's account is inactive. The user is not allowed to login.</td></tr>
 				<tr><td>wrong_login</td><td>Credentials were incorrect.</td></tr>
 			</table>

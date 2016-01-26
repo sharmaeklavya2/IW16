@@ -21,8 +21,13 @@ class Player(models.Model):
 	user = models.OneToOneField(User)
 	ip_address = models.GenericIPAddressField()
 
-	contact_fields = ('name')
-	name = models.CharField(max_length=128, blank=False)
+	contact_fields = ('name1', 'name2', 'email1', 'email2', 'phone1', 'phone2')
+	name1 = models.CharField(max_length=128, blank=False)
+	name2 = models.CharField(max_length=128, blank=False)
+	email1 = models.EmailField(blank=False)
+	email2 = models.EmailField(blank=False)
+	phone1 = models.BigIntegerField(null=True, blank=True)
+	phone2 = models.BigIntegerField(null=True, blank=True)
 
 	def __str__(self):
 		return self.user.username
