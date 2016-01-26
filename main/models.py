@@ -26,8 +26,8 @@ class Player(models.Model):
 	name2 = models.CharField(max_length=128, blank=False)
 	email1 = models.EmailField(blank=False)
 	email2 = models.EmailField(blank=False)
-	phone1 = models.BigIntegerField(null=True, blank=True)
-	phone2 = models.BigIntegerField(null=True, blank=True)
+	phone1 = models.BigIntegerField()
+	phone2 = models.BigIntegerField()
 
 	cached_score = models.PositiveIntegerField(default=0)
 	cached_ttime = models.DurationField(default=timedelta(0))

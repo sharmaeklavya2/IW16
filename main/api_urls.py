@@ -9,4 +9,5 @@ urlpatterns = [
 	url(r'^game-info/$', api_views.game_info, name='game_info'),
 	url(r'^user-info/$', api_views.user_info, name='user_info'),
 	url(r'^ldrbrd/$', api_views.ldrbrd, name='ldrbrd'),
+	url(r'^register/$', api_views.register, name='register'),
 ]

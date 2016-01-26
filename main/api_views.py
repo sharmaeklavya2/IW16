@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 
 from main.models import Question, Player, Answer, GamePerm, make_answer, get_perm
 from django.conf import settings
+from main import forms
 
 def TextResponse(message, status=None):
 	return HttpResponse(message, content_type="text/plain", status=status)
@@ -49,7 +50,7 @@ def login_view(request):
 		if not user:
 			return TextResponse("wrong_login")
 		elif not user.is_active:
-			return TextResponse("inactive")
+			return TextResponse("inactive", 403)
 		else:
 			login(request, user)
 			return TextResponse("success")
@@ -147,6 +148,8 @@ def game_info(request):
 
 @require_safe
 def ldrbrd(request):
+	if not get_perm("view_ldrbrd"):
+		return TextResponse("ldrbrd_closed", 403)
 	response_dict = {}
 	if request.user.is_authenticated():
 		player = request.user.player
@@ -171,3 +174,29 @@ def ldrbrd(request):
 		plist.append((p.user.username, p.cached_score, p.cached_ttime.total_seconds()))
 	response_dict["ldrbrd"] = plist
 	return MyJsonResponse(response_dict)
+
+@csrf_exempt
+@require_POST
+def register(request):
+	if not get_perm("register"):
+		return TextResponse("reg_closed", 403)
+
+	form = forms.PlayerForm(request.POST)
+	if not form.is_valid():
+		return TextResponse("invalid_data", 400)
+
+	player = form.save(commit=False)
+	username = form.cleaned_data["username"]
+	password = form.cleaned_data["password"]
+	if User.objects.filter(username=username).exists():
+		return TextResponse("username_taken")
+	user = User(username=username)
+	user.set_password(password)
+	user.save()
+	user = authenticate(username=username, password=password)
+	login(request, user)
+	player.user = user
+	player.ip_address = request.META["REMOTE_ADDR"]
+	player.save()
+
+	return TextResponse("success")

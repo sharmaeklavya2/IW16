@@ -10,6 +10,7 @@ perms = [
 	"register",
 	"view_ques",
 	"answer",
+	"view_ldrbrd",
 ]
 
 def set_perms():
