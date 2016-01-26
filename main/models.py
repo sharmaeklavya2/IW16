@@ -29,6 +29,9 @@ class Player(models.Model):
 	phone1 = models.BigIntegerField(null=True, blank=True)
 	phone2 = models.BigIntegerField(null=True, blank=True)
 
+	cached_score = models.PositiveIntegerField(default=0)
+	cached_ttime = models.DurationField(default=timedelta(0))
+
 	def __str__(self):
 		return self.user.username
 	def get_score(self):
@@ -36,6 +39,10 @@ class Player(models.Model):
 	def get_total_time(self):
 		corr_answers = list(Answer.objects.filter(is_correct=True, user=self.user))
 		return sum((x.get_solve_time() for x in corr_answers), timedelta(0))
+	def update_cache(self):
+		self.cached_score = self.get_score()
+		self.cached_ttime = self.get_total_time()
+		self.save()
 
 class Answer(models.Model):
 	text = models.CharField("Player's Answer", max_length=MAX_ANSWER_LENGTH, blank=False)
@@ -78,8 +85,13 @@ def make_answer(question, user, userans):
 	except Answer.DoesNotExist:
 		ans = Answer(question=question, user=user, time=time)
 	if not ans.is_correct:
+		player = user.player
 		ans.text = userans
 		ans.is_correct = ans.get_attstat()
+		if ans.is_correct:
+			player.cached_score+= 1
+			player.cached_ttime+= (time - settings.BASE_DATETIME)
+			player.save()
 		ans.attempts+= 1
 		ans.save()
 		return ans

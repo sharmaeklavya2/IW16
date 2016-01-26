@@ -177,6 +177,37 @@
 				<tr><td>time</td><td>datetime (string)</td><td>Time when user solved this question. This does not include time penalty.</table>
 			<p>If <code>qno</code> is invalid, 404 occurs.</p>
 		</li>
+
+		<li>
+			<h2>GET /api/ldrbrd/</h2>
+			<p>Gets a paginated leaderboard along with some other data.</p>
+			<table>
+				<tr><td>Request Format</td><td>An optional querystring</td></tr>
+				<tr><td>Response Format</td><td>application/json</td></tr>
+				<tr><td>Login required</td><td>Optional</td></tr>
+			</table>
+			<h4>Querystring:</h4>
+			<p>page - Page number of the leaderboard page which is to be shown. Numbering starts from 1.</p>
+			<h4>Response:</h4>
+			<p>Returns a JSON object with the following fields:</p>
+			<table>
+				<tr><td>pages</td><td>integer</td><td>Number of pages in the leaderboard</td></tr>
+				<tr><td>ldrbrd</td><td>list of lists</td>
+				<td>A list made of lists of 3 elements - username, score, total time taken (in seconds)</td></tr>
+				<tr><td>my_rank</td><td>integer</td><td>Rank of the user. This field is available only if the user is logged in.</td></tr>
+				<tr><td>my_page</td><td>integer</td><td>Page where the user belongs to on the leaderboard. This field is available only if the user is logged in.</td></tr>
+			</table>
+			<h4>Example:</h4>
+<pre><code>{
+  "ldrbrd": [
+    ["user3", 3, -22319.183956],
+    ["user1", 2, -15035.257432],
+    ["user4", 2, -5872.349751]
+  ],
+  "pages": 1
+}
+</code></pre>
+		</li>
 	</ul>
 </body>
 </html>

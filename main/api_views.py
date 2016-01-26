@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.http import require_safe, require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 
 import json
 from datetime import datetime, timedelta
@@ -141,4 +143,31 @@ def game_info(request):
 		"time_penalty_s": settings.TIME_PENALTY_S,
 		"perms": perms,
 	}
+	return MyJsonResponse(response_dict)
+
+@require_safe
+def ldrbrd(request):
+	response_dict = {}
+	if request.user.is_authenticated():
+		player = request.user.player
+		my_rank = Player.objects.filter(Q(cached_score__gt=player.cached_score) | Q(cached_score=player.cached_score, cached_ttime__lt=player.cached_ttime)).count()+1
+		my_page = (my_rank-1)//settings.LDRBRD_PAGE_SIZE
+		response_dict["my_rank"] = my_rank
+		response_dict["my_page"] = my_page
+	qset = Player.objects.filter(cached_score__gt=0).select_related('user').order_by('-cached_score', 'cached_ttime')
+	paginator = Paginator(qset, settings.LDRBRD_PAGE_SIZE)
+	response_dict["pages"] = paginator.num_pages
+	page = request.GET.get('page')
+	try:
+		players = paginator.page(page)
+	except PageNotAnInteger:
+		# If page is not an integer, deliver first page.
+		players = paginator.page(1)
+	except EmptyPage:
+		# If page is out of range, deliver last page of results.
+		players = paginator.page(paginator.num_pages)
+	plist = []
+	for p in players:
+		plist.append((p.user.username, p.cached_score, p.cached_ttime.total_seconds()))
+	response_dict["ldrbrd"] = plist
 	return MyJsonResponse(response_dict)
