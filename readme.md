@@ -1,6 +1,6 @@
 # IW16
 
-This is the backend for **Internet Whirlwind 2016**. It is written in Python 3.4 and Django 1.8. Currently it only includes API calls and admin interface integration.
+This is the backend for **Internet Whirlwind 2016**. It is written in Python 3.4 and Django 1.8. Currently it only includes API calls and admin interface.
 
 API calls are documented in `api_doc.html`.
 

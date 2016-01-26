@@ -34,7 +34,7 @@ class Player(models.Model):
 	def get_score(self):
 		return Answer.objects.filter(is_correct=True, user=self.user).count()
 	def get_total_time(self):
-		corr_answers = list(Answer.objects.filter(is_correct=True, user=self.user).all())
+		corr_answers = list(Answer.objects.filter(is_correct=True, user=self.user))
 		return sum((x.get_solve_time() for x in corr_answers), timedelta(0))
 
 class Answer(models.Model):

@@ -17,6 +17,7 @@ migrations/
 
 # private
 secret.txt
+secret/
 /TODO.txt
 /.env
 

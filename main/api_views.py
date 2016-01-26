@@ -105,6 +105,7 @@ def get_ans_dict(ans, solve_time=None):
 	]
 	return settings.DICT_TYPE(ans_data)
 
+@require_safe
 @login_required_ajax
 def user_info(request):
 	user = request.user
@@ -129,6 +130,7 @@ def user_info(request):
 	user_dict = settings.DICT_TYPE(user_data)
 	return MyJsonResponse(user_dict)
 
+@require_safe
 def game_info(request):
 	perms = {}
 	for perm in GamePerm.objects.all():
