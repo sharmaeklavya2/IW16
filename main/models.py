@@ -9,25 +9,24 @@ MAX_ANSWER_LENGTH = 30
 
 class Question(models.Model):
 	qno = models.PositiveIntegerField("Question number", unique=True)
-	title = models.CharField(max_length=30, blank=True)
-	text = models.TextField(blank=True)
 	corrans = models.CharField("Correct Answer", max_length=MAX_ANSWER_LENGTH, blank=False)
-	score = models.IntegerField(default=0)
+	score = models.IntegerField()
 
 	def __str__(self):
-		return str(self.qno)+"-"+(self.title or self.text[:30])
+		return str(self.qno)
 
 class Player(models.Model):
 	user = models.OneToOneField(User)
 	ip_address = models.GenericIPAddressField()
 
-	contact_fields = ('name1', 'name2', 'email1', 'email2', 'phone1', 'phone2')
+	contact_fields = ('name1', 'name2', 'email1', 'email2', 'phone1', 'phone2', 'college')
 	name1 = models.CharField(max_length=128, blank=False)
-	name2 = models.CharField(max_length=128, blank=False)
+	name2 = models.CharField(max_length=128, blank=True)
 	email1 = models.EmailField(blank=False)
-	email2 = models.EmailField(blank=False)
+	email2 = models.EmailField(blank=True)
 	phone1 = models.BigIntegerField()
-	phone2 = models.BigIntegerField()
+	phone2 = models.BigIntegerField(blank=True, null=True)
+	college = models.CharField(max_length=100, blank=True)
 
 	cached_score = models.PositiveIntegerField(default=0)
 	cached_ttime = models.DurationField(default=timedelta(0))
@@ -35,7 +34,7 @@ class Player(models.Model):
 	def __str__(self):
 		return self.user.username
 	def get_score(self):
-		return Answer.objects.filter(is_correct=True, user=self.user).count()
+		return Answer.objects.filter(is_correct=True, user=self.user).aggregate(s=models.Sum('question__score'))["s"]
 	def get_total_time(self):
 		corr_answers = list(Answer.objects.filter(is_correct=True, user=self.user))
 		return sum((x.get_solve_time() for x in corr_answers), timedelta(0))
@@ -89,7 +88,7 @@ def make_answer(question, user, userans):
 		ans.text = userans
 		ans.is_correct = ans.get_attstat()
 		if ans.is_correct:
-			player.cached_score+= 1
+			player.cached_score+= question.score
 			player.cached_ttime+= (time - settings.BASE_DATETIME)
 			player.save()
 		ans.attempts+= 1

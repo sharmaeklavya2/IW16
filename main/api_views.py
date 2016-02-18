@@ -5,6 +5,7 @@ from django.views.decorators.http import require_safe, require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db import models
 from django.db.models import Q
 
 import json
@@ -22,25 +23,13 @@ def MyJsonResponse(object_to_send, status=None):
 
 def login_required_ajax(func):
 	def dec_func(request, **kwargs):
-		if request.user.is_authenticated():
-			return func(request, **kwargs)
-		else:
+		if not request.user.is_authenticated():
 			return TextResponse("401 - Unauthorized", 401)
-	return dec_func
-
-@require_safe
-#@login_required_ajax
-def get_question(request, qno):
-	try:
-		qno = int(qno)
-		q = Question.objects.get(qno=qno)
-		data = settings.DICT_TYPE([("qno", q.qno), ("title", q.title), ("text", q.text)])
-		if get_perm("view_ques"):
-			return MyJsonResponse(data)
+		elif not Player.objects.filter(user=request.user).exists():
+			return TextResponse("403 - You are not a player", 403)
 		else:
-			return TextResponse("403 - Forbidden - You are not allowed to view questions now", 403)
-	except (ValueError, Question.DoesNotExist):
-		return TextResponse("404 - Not Found", 404)
+			return func(request, **kwargs)
+	return dec_func
 
 @csrf_exempt
 @require_POST
@@ -62,6 +51,11 @@ def login_view(request):
 def logout_view(request):
 	logout(request)
 	return TextResponse("logged out")
+
+@require_safe
+def qno_list(request):
+	l = list(Question.objects.values_list('qno', flat=True))
+	return MyJsonResponse(l)
 
 @csrf_exempt
 @require_POST
@@ -125,7 +119,7 @@ def user_info(request):
 		wrongs.append(get_ans_dict(ans))
 	user_data = [
 		("username", user.username),
-		("score", len(corrs)),
+		("score", user.player.cached_score),
 		("time_taken_s", total_time.total_seconds()),
 		("corrects", corrs),
 		("wrongs", wrongs),
@@ -140,6 +134,7 @@ def game_info(request):
 		perms[perm.label] = perm.value
 	response_dict = {
 		"total_questions": Question.objects.count(),
+		"max_score": Question.objects.aggregate(max_score=models.Sum('score'))["max_score"],
 		"base_datetime": settings.BASE_DATETIME,
 		"time_penalty_s": settings.TIME_PENALTY_S,
 		"perms": perms,

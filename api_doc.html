@@ -52,7 +52,7 @@
 	</table>
 	<ul>
 		<li>
-			<h2>GET /api/get-question/{qno}/</h2>
+			<h2>GET /api/qno-list/</h2>
 			<table>
 				<tr><td>Request Format</td><td>-</td></tr>
 				<tr><td>Response Format</td><td>application/json</td></tr>
@@ -60,13 +60,7 @@
 				<tr><td>Required game permission</td><td>view_ques</td></tr>
 			</table>
 			<h4>Response:</h4>
-			<p>Returns a JSON object with the following fields:</p>
-			<table>
-				<tr><td>qno</td><td>integer</td><td>Question number</td></tr>
-				<tr><td>title</td><td>string</td><td>Title</td></tr>
-				<tr><td>text</td><td>string</td><td>Body of the question in HTML</td></tr>
-			</table>
-			<p>If <code>qno</code> is invalid, 404 occurs.</p>
+			<p>Returns a JSON list of valid question numbers.</p>
 		</li>
 
 		<li>
@@ -80,6 +74,7 @@
 			<p>Returns a JSON object with the following fields:</p>
 			<table>
 				<tr><td>total_questions</td><td>integer</td><td>Number of questions in the game</td></tr>
+				<tr><td>max_score</td><td>integer</td><td>Sum of scores of all questions in the game</td></tr>
 				<tr><td>base_datetime</td><td>datetime (string)</td><td>Datetime used to calculate total time of a user</td></tr>
 				<tr><td>time_penalty_s</td><td>integer</td><td>Time penalty (in seconds) for wrong answer</td></tr>
 				<tr>
@@ -100,7 +95,7 @@
 			<p>Returns a JSON object with the following fields:</p>
 			<table>
 				<tr><td>username</td><td>string</td><td>Username of the logged in user</td></tr>
-				<tr><td>score</td><td>integer</td><td>Number of questions solved by the user</td></tr>
+				<tr><td>score</td><td>integer</td><td>Sum of scores of all questions solved by the user</td></tr>
 				<tr><td>time_taken_s</td><td>float</td><td>Sum of time taken (in seconds) by user for each correctly answered question</td></tr>
 				<tr>
 					<td>corrects</td><td>array of objects</td>

@@ -3,7 +3,7 @@ from django.contrib.admin import ModelAdmin
 from main.models import Question, Player, Answer, GamePerm
 
 class QuestionAdmin(ModelAdmin):
-	list_display = ("qno", "title", "corrans")
+	list_display = ("qno", "score", "corrans")
 
 class AnswerAdmin(ModelAdmin):
 	list_display = ("text", "is_correct", "user", "time")
