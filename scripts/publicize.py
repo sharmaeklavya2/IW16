@@ -7,7 +7,7 @@ from collections import OrderedDict
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-PUBLIC_ATTRS = ('title', 'score')
+PUBLIC_ATTRS = ('title', 'score', 'hint', 'hint_penalty')
 
 def publicize(data1):
 	data2 = []
