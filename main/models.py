@@ -9,7 +9,7 @@ MAX_ANSWER_LENGTH = 30
 
 class Question(models.Model):
 	qno = models.PositiveIntegerField("Question number", unique=True)
-	corrans = models.CharField("Correct Answer", max_length=MAX_ANSWER_LENGTH, blank=False)
+	corrans = models.CharField("Correct Answer", max_length=MAX_ANSWER_LENGTH)
 	score = models.IntegerField()
 
 	def __str__(self):
@@ -20,9 +20,9 @@ class Player(models.Model):
 	ip_address = models.GenericIPAddressField()
 
 	contact_fields = ('name1', 'name2', 'email1', 'email2', 'phone1', 'phone2', 'college')
-	name1 = models.CharField(max_length=128, blank=False)
+	name1 = models.CharField(max_length=128)
 	name2 = models.CharField(max_length=128, blank=True)
-	email1 = models.EmailField(blank=False)
+	email1 = models.EmailField()
 	email2 = models.EmailField(blank=True)
 	phone1 = models.BigIntegerField()
 	phone2 = models.BigIntegerField(blank=True, null=True)
@@ -44,7 +44,7 @@ class Player(models.Model):
 		self.save()
 
 class Answer(models.Model):
-	text = models.CharField("Player's Answer", max_length=MAX_ANSWER_LENGTH, blank=False)
+	text = models.CharField("Player's Answer", max_length=MAX_ANSWER_LENGTH)
 	user = models.ForeignKey(User)
 	question = models.ForeignKey(Question)
 	is_correct = models.BooleanField(default=False)
@@ -62,7 +62,7 @@ class Answer(models.Model):
 		return (self.time - settings.BASE_DATETIME) + (self.attempts-1)*timedelta(seconds=settings.TIME_PENALTY_S)
 
 class GamePerm(models.Model):
-	label = models.CharField(max_length=30, blank=False, unique=True)
+	label = models.CharField(max_length=30, unique=True)
 	value = models.BooleanField()
 	def __str__(self):
 		return "({0}, {1})".format(self.label, self.value)
