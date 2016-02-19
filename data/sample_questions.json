@@ -14,6 +14,8 @@
 		"title": "BITSACM president",
 		"text": "Who was the president of BITS Pilani's ACM Student Chapter in 2014-15?",
 		"corrans": "Hasil Sharma",
-		"score": 100
+		"score": 300,
+		"hint": "His initials are HS",
+		"hint_penalty": 150
 	}
 ]

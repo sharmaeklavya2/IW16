@@ -11,6 +11,9 @@ class Question(models.Model):
 	qno = models.PositiveIntegerField("Question number", unique=True)
 	corrans = models.CharField("Correct Answer", max_length=MAX_ANSWER_LENGTH)
 	score = models.IntegerField()
+	hint = models.TextField(blank=True)
+	hint_penalty = models.IntegerField(default=0)
+	hint_enabled = models.BooleanField()
 
 	def __str__(self):
 		return str(self.qno)
@@ -34,7 +37,10 @@ class Player(models.Model):
 	def __str__(self):
 		return self.user.username
 	def get_score(self):
-		return Answer.objects.filter(is_correct=True, user=self.user).aggregate(s=models.Sum('question__score'))["s"]
+		corrs = Answer.objects.filter(is_correct=True, user=self.user)
+		base_score = corrs.aggregate(s=models.Sum('question__score'))["s"]
+		hint_penalty = corrs.filter(hint_taken=True).aggregate(s=models.Sum('question__hint_penalty'))["s"] or 0
+		return base_score - hint_penalty
 	def get_total_time(self):
 		corr_answers = list(Answer.objects.filter(is_correct=True, user=self.user))
 		return sum((x.get_solve_time() for x in corr_answers), timedelta(0))
@@ -44,12 +50,13 @@ class Player(models.Model):
 		self.save()
 
 class Answer(models.Model):
-	text = models.CharField("Player's Answer", max_length=MAX_ANSWER_LENGTH)
+	text = models.CharField("Player's Answer", max_length=MAX_ANSWER_LENGTH, blank=True)
 	user = models.ForeignKey(User)
 	question = models.ForeignKey(Question)
 	is_correct = models.BooleanField(default=False)
 	attempts = models.PositiveIntegerField(default=0)
 	time = models.DateTimeField()
+	hint_taken = models.BooleanField(default=False)
 
 	def __str__(self):
 		return "(user={}, question={}, text={}, is_correct={}, attempts={})".format(self.user, self.question, self.text, self.is_correct, self.attempts)
@@ -89,6 +96,8 @@ def make_answer(question, user, userans):
 		ans.is_correct = ans.get_attstat()
 		if ans.is_correct:
 			player.cached_score+= question.score
+			if ans.hint_taken:
+				player.cached_score-= question.hint_penalty
 			player.cached_ttime+= (time - settings.BASE_DATETIME)
 			player.save()
 		ans.attempts+= 1
@@ -96,3 +105,12 @@ def make_answer(question, user, userans):
 		return ans
 	else:
 		return None
+
+def take_hint(question, user):
+	if question.hint_enabled:
+		try:
+			ans = Answer.objects.get(question=question, user=user)
+		except Answer.DoesNotExist:
+			ans = Answer(question=question, user=user, time=settings.BASE_DATETIME)
+		ans.hint_taken = True
+		ans.save()

@@ -9,12 +9,24 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if BASE_DIR not in sys.path:
 	sys.path.append(BASE_DIR)
 
+def add_attrs(obj, attr_list, data, force=True):
+	for attr in attr_list:
+		if force or attr in data:
+			setattr(obj, attr, data[attr])
+
 def add_ques_list(fname):
 	Question.objects.all().delete()
 	with open(fname) as qfile:
 		data = json.load(qfile)
 		for (i, ques) in enumerate(data):
-			Question(qno=i+1, score=ques["score"], corrans=ques["corrans"]).save()
+			q = Question(qno=i+1)
+			add_attrs(q, ('score', 'corrans'), ques)
+			if "hint" in ques:
+				add_attrs(q, ('hint', 'hint_penalty'), ques)
+				q.hint_enabled = True
+			else:
+				q.hint_enabled = False
+			q.save()
 
 if __name__=="__main__":
 	# set up django

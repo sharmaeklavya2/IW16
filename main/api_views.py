@@ -109,10 +109,8 @@ def user_info(request):
 	corrs_db = Answer.objects.filter(user=user, is_correct=True)
 	wrongs_db = Answer.objects.filter(user=user, is_correct=False, attempts__gt=0)
 	corrs = []
-	total_time = timedelta(0)
 	for ans in corrs_db:
 		solve_time = ans.get_solve_time()
-		total_time+= solve_time
 		corrs.append(get_ans_dict(ans, solve_time))
 	wrongs = []
 	for ans in wrongs_db:
@@ -120,7 +118,7 @@ def user_info(request):
 	user_data = [
 		("username", user.username),
 		("score", user.player.cached_score),
-		("time_taken_s", total_time.total_seconds()),
+		("time_taken_s", user.player.cached_ttime.total_seconds()),
 		("corrects", corrs),
 		("wrongs", wrongs),
 	]
