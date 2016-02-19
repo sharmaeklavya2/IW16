@@ -5,6 +5,7 @@ __pycache__/
 output.txt
 output.html
 doc/*.html
+/static/qfile.*
 
 # local
 *.db
@@ -27,3 +28,4 @@ Desktop.ini
 .DS_Store
 .AppleDouble
 .LSOverride
+*.swp
