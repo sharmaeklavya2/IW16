@@ -11,7 +11,7 @@ from django.db.models import Q
 import json
 from datetime import datetime, timedelta
 
-from main.models import Question, Player, Answer, GamePerm, make_answer, get_perm
+from main.models import Question, Player, Answer, GamePerm, make_answer, get_perm, take_hint
 from django.conf import settings
 from main import forms
 
@@ -193,3 +193,40 @@ def register(request):
 	player.save()
 
 	return TextResponse("success")
+
+@csrf_exempt
+@require_POST
+@login_required_ajax
+def take_hint_view(request, qno):
+	try:
+		qno = int(qno)
+		q = Question.objects.get(qno=qno)
+		can_take_hint = take_hint(q, request.user)
+		if can_take_hint:
+			return TextResponse(q.hint)
+		else:
+			return TextResponse("403 - You cannot take hint", 403)
+	except (ValueError, Question.DoesNotExist):
+		return TextResponse("404 - Not Found", 404)
+
+@require_safe
+def hint_status(request, qno):
+	try:
+		qno = int(qno)
+		q = Question.objects.get(qno=qno)
+		hint_perm = get_perm("take_hint")
+		response_dict = {
+			"take_hint_perm": hint_perm,
+			"hint_enabled": q.hint_enabled,
+		}
+		if q.hint_enabled and hint_perm:
+			response_dict["hint_penalty"] = q.hint_penalty
+		if request.user.is_authenticated():
+			try:
+				ans = Answer.objects.get(question=q, user=request.user)
+				response_dict["hint_taken"] = ans.hint_taken
+			except Answer.DoesNotExist:
+				response_dict["hint_taken"] = False
+		return MyJsonResponse(response_dict)
+	except (ValueError, Question.DoesNotExist):
+		return TextResponse("404 - Not Found", 404)

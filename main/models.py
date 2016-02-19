@@ -107,10 +107,21 @@ def make_answer(question, user, userans):
 		return None
 
 def take_hint(question, user):
-	if question.hint_enabled:
-		try:
-			ans = Answer.objects.get(question=question, user=user)
-		except Answer.DoesNotExist:
+	"""Returns whether hint can be viewed. Also sets Answer.hint_taken if hint can be viewed"""
+	try:
+		ans = Answer.objects.get(question=question, user=user)
+		if ans.hint_taken:
+			return True
+	except Answer.DoesNotExist:
+		ans = None
+	if question.hint_enabled and get_perm("take_hint"):
+		if ans==None:
 			ans = Answer(question=question, user=user, time=settings.BASE_DATETIME)
 		ans.hint_taken = True
 		ans.save()
+		if ans.is_correct:
+			user.player.cached_score-= question.hint_penalty
+			user.player.save()
+		return True
+	else:
+		return False

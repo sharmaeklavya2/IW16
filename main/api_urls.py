@@ -11,4 +11,6 @@ urlpatterns = [
 	url(r'^user-info/$', api_views.user_info, name='user_info'),
 	url(r'^ldrbrd/$', api_views.ldrbrd, name='ldrbrd'),
 	url(r'^register/$', api_views.register, name='register'),
+	url(r'^hint-status/(?P<qno>\d+)/$', api_views.hint_status, name='hint_status'),
+	url(r'^take-hint/(?P<qno>\d+)/$', api_views.take_hint_view, name='take_hint'),
 ]

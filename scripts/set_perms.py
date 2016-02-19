@@ -11,6 +11,7 @@ perms = [
 	"view_ques",
 	"answer",
 	"view_ldrbrd",
+	"take_hint",
 ]
 
 def set_perms():
