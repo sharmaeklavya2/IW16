@@ -2,10 +2,11 @@
 *.pyc
 __pycache__/
 /README.html
+/readme.html
+/Readme.html
 output.txt
 output.html
 doc/*.html
-/static/qfile.*
 
 # local
 *.db
@@ -15,6 +16,10 @@ venv/
 local_conf/
 /extstatic/
 migrations/
+/static/pdata.*
+/static/ques/
+/static/ques
+/data/qdata.json
 
 # private
 secret.txt

@@ -1,18 +1,16 @@
 [
 	{
 		"title": "India's capital",
-		"text": "What is the capital of India?",
 		"corrans": "Delhi",
 		"score": 100
 	},
 	{
-		"text": "What is the capital of France?",
+		"title": "France's capital",
 		"corrans": "Paris",
 		"score": 100
 	},
 	{
-		"title": "BITSACM president",
-		"text": "Who was the president of BITS Pilani's ACM Student Chapter in 2014-15?",
+		"title": "BITSACM ex-president",
 		"corrans": "Hasil Sharma",
 		"score": 300,
 		"hint": "His initials are HS",
