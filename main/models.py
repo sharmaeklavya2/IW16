@@ -40,7 +40,7 @@ class Player(models.Model):
 		return self.user.username
 	def get_score(self):
 		corrs = Answer.objects.filter(is_correct=True, user=self.user)
-		base_score = corrs.aggregate(s=models.Sum('question__score'))["s"]
+		base_score = corrs.aggregate(s=models.Sum('question__score'))["s"] or 0
 		hint_penalty = corrs.filter(hint_taken=True).aggregate(s=models.Sum('question__hint_penalty'))["s"] or 0
 		return base_score - hint_penalty
 	def get_total_time(self):

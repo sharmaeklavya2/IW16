@@ -132,7 +132,7 @@ def game_info(request):
 		perms[perm.label] = perm.value
 	response_dict = {
 		"total_questions": Question.objects.count(),
-		"max_score": Question.objects.aggregate(max_score=models.Sum('score'))["max_score"],
+		"max_score": Question.objects.aggregate(max_score=models.Sum('score'))["max_score"] or 0,
 		"base_datetime": settings.BASE_DATETIME,
 		"time_penalty_s": settings.TIME_PENALTY_S,
 		"perms": perms,

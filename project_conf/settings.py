@@ -111,6 +111,7 @@ TIME_PENALTY_S = 60
 # Number of seconds to be added to player's total time.
 
 BASE_DATETIME = timezone.now()
+#BASE_DATETIME = datetime(2016, 2, 23, 18, 5, 0, 0, tzinfo=timezone.utc)	# 11:35 pm at 23-2-2016 in IST
 # datetime used to calculate total time of a user
 
 LDRBRD_PAGE_SIZE = 20
