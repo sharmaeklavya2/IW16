@@ -189,6 +189,7 @@ def register(request):
 	user = authenticate(username=username, password=password)
 	login(request, user)
 	player.user = user
+	player.cached_ttime = timedelta(0)
 	player.ip_address = request.META["REMOTE_ADDR"]
 	player.save()
 
