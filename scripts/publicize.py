@@ -7,7 +7,7 @@ from collections import OrderedDict
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-PUBLIC_ATTRS = ('title', 'score', 'hint', 'hint_penalty')
+PUBLIC_ATTRS = ('title', 'score', 'hint_penalty')
 
 def publicize(data1):
 	data2 = []
@@ -21,7 +21,7 @@ def publicize(data1):
 
 def main(fname):
 	ifile = open(fname)
-	ofile = open(os.path.join(BASE_DIR, 'static', 'qfile.json'), 'w')
+	ofile = open(os.path.join(BASE_DIR, 'static', 'pdata.json'), 'w')
 	json.dump(publicize(json.load(ifile)), ofile, indent=4)
 
 if __name__=="__main__":
