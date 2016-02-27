@@ -11,7 +11,10 @@ class AnswerAdmin(ModelAdmin):
 class GamePermAdmin(ModelAdmin):
 	list_display = ("label", "value")
 
+class PlayerAdmin(ModelAdmin):
+	list_display = ("user", "cached_score", "cached_ttime")
+
 admin.site.register(Question, QuestionAdmin)
-admin.site.register(Player)
+admin.site.register(Player, PlayerAdmin)
 admin.site.register(Answer, AnswerAdmin)
 admin.site.register(GamePerm, GamePermAdmin)

@@ -94,6 +94,14 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# Admin
+
+from django.contrib import admin
+admin.site.site_header = PROJECT_TITLE + " admin site"
+admin.site.site_title = PROJECT_NAME + " admin site"
+admin.site.site_url = STATIC_URL + "index.html"
+admin.site.index_title = "App Index"
+
 # Misc
 
 from datetime import datetime, timedelta

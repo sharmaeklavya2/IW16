@@ -27,7 +27,7 @@ class Player(models.Model):
 	name2 = models.CharField(max_length=128, blank=True)
 	email1 = models.EmailField()
 	email2 = models.EmailField(blank=True)
-	phone1 = models.BigIntegerField()
+	phone1 = models.BigIntegerField(blank=True, null=True)
 	phone2 = models.BigIntegerField(blank=True, null=True)
 	id1 = models.CharField(max_length=30)
 	id2 = models.CharField(max_length=30, blank=True)
