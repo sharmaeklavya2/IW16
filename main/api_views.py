@@ -143,16 +143,17 @@ def game_info(request):
 def ldrbrd(request):
 	if not get_perm("view_ldrbrd"):
 		return TextResponse("ldrbrd_closed", 403)
-	response_dict = {}
-	if request.user.is_authenticated():
-		player = request.user.player
-		my_rank = Player.objects.filter(Q(cached_score__gt=player.cached_score) | Q(cached_score=player.cached_score, cached_ttime__lt=player.cached_ttime)).count()+1
-		my_page = (my_rank-1)//settings.LDRBRD_PAGE_SIZE
-		response_dict["my_rank"] = my_rank
-		response_dict["my_page"] = my_page
+	response_dict = settings.DICT_TYPE()
+	response_dict["page_size"] = settings.LDRBRD_PAGE_SIZE
 	qset = Player.objects.filter(cached_score__gt=0).select_related('user').order_by('-cached_score', 'cached_ttime')
 	paginator = Paginator(qset, settings.LDRBRD_PAGE_SIZE)
 	response_dict["pages"] = paginator.num_pages
+	if request.user.is_authenticated():
+		player = request.user.player
+		my_rank = Player.objects.filter(Q(cached_score__gt=player.cached_score) | Q(cached_score=player.cached_score, cached_ttime__lt=player.cached_ttime)).count()+1
+		my_page = (my_rank-1)//settings.LDRBRD_PAGE_SIZE+1
+		response_dict["my_rank"] = my_rank
+		response_dict["my_page"] = my_page
 	page = request.GET.get('page')
 	try:
 		players = paginator.page(page)
