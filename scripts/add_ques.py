@@ -21,6 +21,7 @@ def add_ques_list(fname):
 		for (i, ques) in enumerate(data):
 			q = Question(qno=i+1)
 			add_attrs(q, ('score', 'corrans'), ques)
+			add_attrs(q, ('title',), ques, False)
 			if "hint" in ques:
 				add_attrs(q, ('hint', 'hint_penalty'), ques)
 				q.hint_enabled = True
