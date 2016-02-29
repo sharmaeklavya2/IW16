@@ -1,6 +1,6 @@
 # IW16
 
-This is the backend for **Internet Whirlwind 2016**. It is written in Python 3.4 and Django 1.8. Currently it only includes API calls and admin interface.
+This is the backend for **Internet Whirlwind 2016**. It is written in Python 3.4 and Django 1.8. It has also been tested on Django 1.9. Currently it only includes API calls and admin interface.
 
 API calls are documented in `api_doc.html`. You can find sample data in `/data/`.
 
@@ -33,7 +33,13 @@ Game permissions are enforced at API view level. Hence, they do not affect admin
 
 ## Rules of the game
 
-There are multiple questions. All questions have a string as answer. All questions have infinite attempts. ACM-ICPC-like rules are used for ranking people.
+There are multiple questions.
+
+1. All questions have a string as answer. Checking is case-insensitive.
+2. Infinite attempts are allowed for all questions.
+3. Users are first judged by total score and then by total time taken for correctly solved questions.
+4. For questions which are eventually correctly solved, each wrong submission will carry a time penalty.
+5. Some questions have hints. Each hint has a score penalty if its question is correctly solved.
 
 ## Question storage scheme
 
