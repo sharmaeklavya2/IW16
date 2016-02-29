@@ -13,7 +13,12 @@ PROJECT_NAME = "IW16"
 PROJECT_TITLE = "Internet Whirlwind 2016"
 
 # Quick-start development settings - unsuitable for production
-SECRET_KEY = "a9w*6qa8)-)og5l+w1u+sx#6zkav!@u^ev1*1=!$&jr=lh1b1_"
+try:
+	sk_fobj = open(os.path.join(CONF_DIR, "secret", "secret_key.txt"))
+	SECRET_KEY = sk_fobj.read().strip()
+	sk_fobj.close()
+except OSError:
+	SECRET_KEY = "a9w*6qa8)-)og5l+w1u+sx#6zkav!@u^ev1*1=!$&jr=lh1b1_"
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
