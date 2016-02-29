@@ -149,11 +149,14 @@ def ldrbrd(request):
 	paginator = Paginator(qset, settings.LDRBRD_PAGE_SIZE)
 	response_dict["pages"] = paginator.num_pages
 	if request.user.is_authenticated():
-		player = request.user.player
-		my_rank = Player.objects.filter(Q(cached_score__gt=player.cached_score) | Q(cached_score=player.cached_score, cached_ttime__lt=player.cached_ttime)).count()+1
-		my_page = (my_rank-1)//settings.LDRBRD_PAGE_SIZE+1
-		response_dict["my_rank"] = my_rank
-		response_dict["my_page"] = my_page
+		try:
+			player = request.user.player
+			my_rank = Player.objects.filter(Q(cached_score__gt=player.cached_score) | Q(cached_score=player.cached_score, cached_ttime__lt=player.cached_ttime)).count()+1
+			my_page = (my_rank-1)//settings.LDRBRD_PAGE_SIZE+1
+			response_dict["my_rank"] = my_rank
+			response_dict["my_page"] = my_page
+		except User.player.RelatedObjectDoesNotExist:
+			pass
 	page = request.GET.get('page')
 	try:
 		players = paginator.page(page)
