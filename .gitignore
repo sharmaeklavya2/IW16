@@ -1,5 +1,5 @@
 # cache/gen
-*.pyc
+*.py[co]
 __pycache__/
 /README.html
 /readme.html
@@ -33,4 +33,4 @@ Desktop.ini
 .DS_Store
 .AppleDouble
 .LSOverride
-*.swp
+*.sw[po]
