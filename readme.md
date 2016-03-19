@@ -43,9 +43,22 @@ There are multiple questions.
 
 ## Question storage scheme
 
-Questions' text will be in separate HTML files. They will be stored in `/static/ques/`. The filename of the n<sup>th</sup> question will be `n.html`.
+All data about questions (like correct answer, score, hint, etc) should be stored in a JSON file (`/data/qdata.json` is in `.gitignore`, you can use that). You can look at `data/sample_qdata.json` as an example. Run `scripts/publicize.py` on it to extract the public part from it (that will be put it into `/static/pdata.json` by that script).
 
-All metadata about questions should be stored in a JSON file (`/data/qdata.json` is in `.gitignore`, you can use that). Format of that file should be similar to `data/sample_qdata.json`. Run `scripts/publicize.py` on it to extract the public part from it (that will be put it into `/static/pdata.json` by that script).
+Questions' text can either be in the JSON file or in separate HTML files in a folder with the same name as the JSON file except the `.json` extension. Similarly hints can either be in the JSON file or in external HTML files.
+
+This is the order for determining the text of a question:
+
+1. If the question's object in the .json file has a `text` attribute, that attribute's value will be taken as the question's text.
+2. If the question's object in the .json file has a `textfile` attribute, that attribute's value will give the name of the file where the question's text is stored.
+3. The question's rank along with a .html extension will form the filename which contains the question.
+4. The question will not have any text.
+
+This is the order for determining the hint of a question:
+
+1. If the question's object in the .json file has a `hint` attribute, that attribute's value will be taken as the question's hint.
+2. If the question's object in the .json file has a `hintfile` attribute, that attribute's value will give the name of the file where the question's text is stored.
+3. The question will not have any hint.
 
 ## License
 

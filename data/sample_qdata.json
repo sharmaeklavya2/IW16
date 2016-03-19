@@ -1,19 +1,43 @@
 [
 	{
 		"title": "India's capital",
+		"text": "What is the capital of India?",
 		"corrans": "Delhi",
+		"score": 50
+	},
+	{
+		"title": "Dumbledore",
+		"text": "What is Dumbledore's first name?",
+		"corrans": "Albus",
 		"score": 100
 	},
 	{
-		"title": "France's capital",
-		"corrans": "Paris",
-		"score": 100
+		"title": "Filling Buckets",
+		"text": "It takes 3 minutes to fill a bucket with the cold water tap and 6 minutes with the hot water tap. How much time in minutes will it take to fill the bucket with both taps on at the same time?",
+		"corrans": "2",
+		"score": 100,
+		"hint": "In one minute, cold water tap fills 1/3 of the bucket and hot water tap fills 1/6 of the bucket. So in one minute, they tohether fill ...",
+		"hint_penalty": 90
 	},
 	{
-		"title": "BITSACM ex-president",
-		"corrans": "Hasil Sharma",
+		"title": "Broken Stick",
+		"corrans": "25",
+		"textfile": "stick.html",
+		"score": 400
+	},
+	{
+		"title": "Breaking Chocolate",
+		"corrans": "24",
 		"score": 300,
-		"hint": "His initials are HS",
-		"hint_penalty": 150
+		"hint": "What happens to the number of pieces when you break one of the pieces into two?",
+		"hint_penalty": 200
+	},
+	{
+		"title": "Ship",
+		"corrans": "10",
+		"textfile": "ship.html",
+		"score": 300,
+		"hintfile": "ship-hint.html",
+		"hint_penalty": 100
 	}
 ]
