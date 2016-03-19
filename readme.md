@@ -46,3 +46,7 @@ There are multiple questions.
 Questions' text will be in separate HTML files. They will be stored in `/static/ques/`. The filename of the n<sup>th</sup> question will be `n.html`.
 
 All metadata about questions should be stored in a JSON file (`/data/qdata.json` is in `.gitignore`, you can use that). Format of that file should be similar to `data/sample_qdata.json`. Run `scripts/publicize.py` on it to extract the public part from it (that will be put it into `/static/pdata.json` by that script).
+
+## License
+
+IW16 is released under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
