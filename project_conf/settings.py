@@ -21,6 +21,7 @@ except OSError:
 	SECRET_KEY = "a9w*6qa8)-)og5l+w1u+sx#6zkav!@u^ev1*1=!$&jr=lh1b1_"
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
+USE_CSRF = False
 
 
 # Application definition
@@ -37,14 +38,18 @@ INSTALLED_APPS = (
 
 MIDDLEWARE_CLASSES = (
 	"django.contrib.sessions.middleware.SessionMiddleware",
-	"django.middleware.common.CommonMiddleware",
-	"django.middleware.csrf.CsrfViewMiddleware",
 	"django.contrib.auth.middleware.AuthenticationMiddleware",
 	"django.contrib.auth.middleware.SessionAuthenticationMiddleware",
 	"django.contrib.messages.middleware.MessageMiddleware",
 	"django.middleware.clickjacking.XFrameOptionsMiddleware",
 	"django.middleware.security.SecurityMiddleware",
 )
+
+if USE_CSRF:
+	MIDDLEWARE_CLASSES+= (
+		"django.middleware.common.CommonMiddleware",
+		"django.middleware.csrf.CsrfViewMiddleware",
+	)
 
 ROOT_URLCONF = CONF_DIR_NAME+".urls"
 

@@ -2,7 +2,6 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.http import require_safe, require_POST
-from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import models
@@ -31,7 +30,6 @@ def login_required_ajax(func):
 			return func(request, **kwargs)
 	return dec_func
 
-@csrf_exempt
 @require_POST
 def login_view(request):
 	if "username" in request.POST and "password" in request.POST and request.POST["username"] and request.POST["password"]:
@@ -46,7 +44,6 @@ def login_view(request):
 	else:
 		return TextResponse("400 - Bad Request - username or password missing", 400)
 
-@csrf_exempt
 @require_POST
 def logout_view(request):
 	logout(request)
@@ -57,7 +54,6 @@ def qno_list(request):
 	l = list(Question.objects.values_list('qno', flat=True))
 	return MyJsonResponse(l)
 
-@csrf_exempt
 @require_POST
 @login_required_ajax
 def submit(request, qno):
@@ -172,7 +168,6 @@ def ldrbrd(request):
 	response_dict["ldrbrd"] = plist
 	return MyJsonResponse(response_dict)
 
-@csrf_exempt
 @require_POST
 def register(request):
 	if not get_perm("register"):
@@ -202,7 +197,6 @@ def register(request):
 
 	return TextResponse("success")
 
-@csrf_exempt
 @require_POST
 @login_required_ajax
 def take_hint_view(request, qno):
