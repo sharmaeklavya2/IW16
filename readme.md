@@ -8,7 +8,7 @@ API calls are documented in `api_doc.html`. You can find sample data in `/data/`
 
 	python3 manage.py runserver makemigrations
 	python3 manage.py runserver migrate
-	python3 scripts/add_ques.py data/sample_qdata.json
+	python3 scripts/populate.py data/sample_qdata.json
 	python3 scripts/publicize.py data/sample_qdata.json
 	python3 scripts/set_perms.py
 	python3 manage.py createsuperuser

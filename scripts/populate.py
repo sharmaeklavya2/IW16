@@ -1,4 +1,4 @@
-"""This script deletes all questions from database and reads questions from a JSON file into database"""
+"""This script reads questions from a JSON file into database"""
 
 import json
 import os
@@ -16,17 +16,24 @@ def add_attrs(obj, attr_list, data, force=True):
 		if force or attr in data:
 			setattr(obj, attr, data[attr])
 
-def add_ques_list(fname):
-	Question.objects.all().delete()
+def add_qfile(fname, clear_db=True, quiet=False):
+	"""
+	Imports data from a JSON file fname into the database.
+	if clear_db is True, the database will be cleared of all previous questions
+	if quiet if False, each question which is added will be displayed
+	"""
+	if clear_db:
+		Question.objects.all().delete()
 	dirname, ext = os.path.splitext(fname)
 	with open(fname) as qfile:
 		data = json.load(qfile)
 		for (i, ques) in enumerate(data):
 			q = Question(qno=i+1)
-			if "title" in ques:
-				print("Adding question:", ques["title"])
-			else:
-				print("Adding question number", q.qno)
+			if not quiet:
+				if "title" in ques:
+					print("Adding question:", ques["title"])
+				else:
+					print("Adding question number", q.qno)
 			add_attrs(q, ('score', 'corrans'), ques)
 			add_attrs(q, ('title',), ques, False)
 			if "hint" in ques:
@@ -40,7 +47,7 @@ def add_ques_list(fname):
 					q.hint_enabled = True
 				except OSError:
 					q.hint_enabled = False
-					print(HINTFILE_ERROR_FORMAT.format(repr(q.title), repr(hintfname)))
+					print(HINTFILE_ERROR_FORMAT.format(repr(q.title), repr(hintfname)), file=sys.stderr)
 			else:
 				q.hint_enabled = False
 			q.save()
@@ -56,4 +63,4 @@ if __name__=="__main__":
 from main.models import Question
 
 if __name__=="__main__":
-	add_ques_list(sys.argv[1])
+	add_qfile(sys.argv[1])
