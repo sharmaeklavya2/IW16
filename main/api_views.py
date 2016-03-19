@@ -11,7 +11,7 @@ from django.db.models import Q
 import json
 from datetime import datetime, timedelta
 
-from main.models import Question, Player, Answer, GamePerm, make_answer, get_perm, take_hint
+from main.models import Question, Player, RegDetails, Answer, GamePerm, make_answer, get_perm, take_hint
 from django.conf import settings
 from main import forms
 
@@ -178,11 +178,10 @@ def register(request):
 	if not get_perm("register"):
 		return TextResponse("reg_closed", 403)
 
-	form = forms.PlayerForm(request.POST)
+	form = forms.RegForm(request.POST)
 	if not form.is_valid():
 		return TextResponse("invalid_data", 400)
 
-	player = form.save(commit=False)
 	username = form.cleaned_data["username"]
 	password = form.cleaned_data["password"]
 	if User.objects.filter(username=username).exists():
@@ -192,10 +191,14 @@ def register(request):
 	user.save()
 	user = authenticate(username=username, password=password)
 	login(request, user)
-	player.user = user
+
+	player = Player(user=user)
 	player.cached_ttime = timedelta(0)
 	player.ip_address = request.META["REMOTE_ADDR"]
 	player.save()
+	reg_details = form.save(commit=False)
+	reg_details.user = user
+	reg_details.save()
 
 	return TextResponse("success")
 

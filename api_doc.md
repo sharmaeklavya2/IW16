@@ -174,17 +174,10 @@
 		</table>
 		<h4>Request:</h4>
 		<table>
-			<tr><td>username *</td><td>sting</td><td></td></tr>
-			<tr><td>password *</td><td>string</td><td></td></tr>
-			<tr><td>name1 *</td><td>string</td><td>Name of first team member</td></tr>
-			<tr><td>name2 </td><td>string</td><td>Name of second team member</td></tr>
-			<tr><td>email1 *</td><td>string</td><td>Email of first team member</td></tr>
-			<tr><td>email2 </td><td>string</td><td>Email of second team member</td></tr>
-			<tr><td>phone1 </td><td>integer</td><td>Phone number of first team member</td></tr>
-			<tr><td>phone2 </td><td>integer</td><td>Phone number of second team member</td></tr>
-			<tr><td>id1 *</td><td>string</td><td>ID of first team member</td></tr>
-			<tr><td>id2 </td><td>string</td><td>ID of second team member</td></tr>
-			<tr><td>college </td><td>string</td><td>College of team</td></tr>
+            <tr><td>username *</td><td>sting</td></tr>
+            <tr><td>password *</td><td>string</td></tr>
+            <tr><td>name *</td><td>string</td></tr>
+            <tr><td>email *</td><td>email</td></tr>
 		</table>
 		<h4>Response:</h4>
 		<p>Returns text which could be one of the following:</p>

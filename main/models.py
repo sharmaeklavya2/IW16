@@ -21,21 +21,9 @@ class Question(models.Model):
 
 class Player(models.Model):
 	user = models.OneToOneField(User)
-	ip_address = models.GenericIPAddressField()
-
-	contact_fields = ('name1', 'name2', 'email1', 'email2', 'phone1', 'phone2', 'college', 'id1', 'id2')
-	name1 = models.CharField(max_length=128)
-	name2 = models.CharField(max_length=128, blank=True)
-	email1 = models.EmailField()
-	email2 = models.EmailField(blank=True)
-	phone1 = models.BigIntegerField(blank=True, null=True)
-	phone2 = models.BigIntegerField(blank=True, null=True)
-	id1 = models.CharField(max_length=30)
-	id2 = models.CharField(max_length=30, blank=True)
-	college = models.CharField(max_length=100, blank=True)
-
 	cached_score = models.PositiveIntegerField(default=0)
 	cached_ttime = models.DurationField(default=timedelta(0))
+	ip_address = models.GenericIPAddressField(default='0.0.0.0')
 
 	def __str__(self):
 		return self.user.username
@@ -51,6 +39,16 @@ class Player(models.Model):
 		self.cached_score = self.get_score()
 		self.cached_ttime = self.get_total_time()
 		self.save()
+
+class RegDetails(models.Model):
+	user = models.OneToOneField(User)
+
+	form_fields = ('name', 'email')
+	name = models.CharField(max_length=127)
+	email = models.EmailField()
+
+	def __str__(self):
+		return self.user.username
 
 class Answer(models.Model):
 	text = models.CharField("Player's Answer", max_length=MAX_ANSWER_LENGTH, blank=True)
